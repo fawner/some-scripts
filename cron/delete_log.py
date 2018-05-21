@@ -46,7 +46,7 @@ def get_mysql(*value, host=_no_value, port=_no_value, user=_no_value, passwd=_no
     try:
         yield cursor
     finally:
-        # conn.commit()
+        conn.commit()
         cursor.close()
         conn.close()
 
