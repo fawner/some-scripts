@@ -52,11 +52,10 @@ def get_mysql(*value, host=_no_value, port=_no_value, user=_no_value, passwd=_no
         conn.close()
 
 
-def write_log(cursor, file):
+def write_log(cursor):
     """
     自定义查询，记录日志
     :param cursor: 游标
-    :param file: 日志文件
     :return: function
     """
 
@@ -64,7 +63,7 @@ def write_log(cursor, file):
         start = datetime.datetime.now()
         effect_row = cursor.execute(sql)
         end = datetime.datetime.now()
-        file.write(Config.log_temp.format(time=str(start), sql=sql, time_consuming=end - start, effect_row=effect_row))
+        print(Config.log_temp.format(time=str(start), sql=sql, time_consuming=end - start, effect_row=effect_row))
 
     return execute
 
@@ -84,8 +83,6 @@ class Config(object):
     time consuming: {time_consuming}
     effect_row: {effect_row}
     """
-    # 日志文件（包含路径）
-    log_route = '/var/log/corn_delete_log.log'
     will_delete_day = get_some_days_ago_time(30)
     limit_number = 10000
     # 每次最大删除数量
@@ -106,9 +103,8 @@ class Config(object):
 
 def main():
     with get_mysql(host=Config.mysql_host, port=Config.mysql_port, user=Config.mysql_user, passwd=Config.mysql_passwd,
-                   db=Config.mysql_db, charset=Config.mysql_charset) as cursor, \
-            open(Config.log_route, 'at') as fi:
-        implment = write_log(cursor, fi)
+                   db=Config.mysql_db, charset=Config.mysql_charset) as cursor:
+        implment = write_log(cursor)
         config = Config()
         # 清理数据
         for table_name in config.table_config:
