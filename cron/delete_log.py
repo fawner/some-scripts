@@ -115,16 +115,17 @@ def main():
             implment(sql)
             max_id = cursor.fetchone()['max(id)']
 
-            sql = config.sql_select_len.format(table=table_name, condition='id<={}'.format(str(max_id)))
-            implment(sql)
-            remaining_amount = cursor.fetchone()['count(id)']
-
-            sql = config.sql_delete.format(table=table_name, max_id=max_id, limit_number=config.limit_number)
-            delete_max_number = config.delete_max_number
-            while remaining_amount > 0 and delete_max_number > 0:
+            if max_id:
+                sql = config.sql_select_len.format(table=table_name, condition='id<={}'.format(str(max_id)))
                 implment(sql)
-                remaining_amount -= config.limit_number
-                delete_max_number -= config.limit_number
+                remaining_amount = cursor.fetchone()['count(id)']
+
+                sql = config.sql_delete.format(table=table_name, max_id=max_id, limit_number=config.limit_number)
+                delete_max_number = config.delete_max_number
+                while remaining_amount > 0 and delete_max_number > 0:
+                    implment(sql)
+                    remaining_amount -= config.limit_number
+                    delete_max_number -= config.limit_number
 
 
 if __name__ == '__main__':
